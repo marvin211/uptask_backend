@@ -14,6 +14,12 @@ pipeline {
                 sh 'npm ci'
             }
         }
+        stage('Vulnerability Scan') {
+            steps {
+                sh 'npm install -g snyk'
+                sh 'snyk test'
+            }
+        }
         stage('Run Tests') {
             steps {
                 sh 'npm test'
@@ -44,6 +50,12 @@ pipeline {
                         sh "kubectl set image deployment/express-api-deployment express-api=your-docker-registry/express-api:${env.BUILD_NUMBER}"
                     }
                 }
+            }
+        }
+        stage('Verify Deployment') {
+            steps {
+                sh 'kubectl get pods'
+                sh 'kubectl get services'
             }
         }
     }
